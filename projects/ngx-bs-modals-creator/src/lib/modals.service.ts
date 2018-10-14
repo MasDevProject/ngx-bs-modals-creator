@@ -6,6 +6,7 @@ import { ModalArgs } from './modal-args';
 export class ModalsService {
 
   public openModalEvt = new EventEmitter<ModalArgs>();
+  public clearAllModalsEvt = new EventEmitter<void>();
 
   public constructor() { }
 
@@ -51,6 +52,10 @@ export class ModalsService {
         }
       });
     });
+  }
+
+  public clearAllModals(): void {
+    this.clearAllModalsEvt.emit();
   }
 
 }

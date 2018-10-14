@@ -8,9 +8,9 @@ export abstract class BaseModalComponent<TArgument, TResult> implements OnInit, 
   public closeEvent = new EventEmitter<void>();
   public argument = <TArgument>{};
 
-  private closedByCode = false;
   private modalElement: JQuery;
   private callbackOrPromise: CallbackOrPromise;
+  private pendingResult: TResult;
 
   public constructor(protected elementRef: ElementRef) { }
 
@@ -21,15 +21,8 @@ export abstract class BaseModalComponent<TArgument, TResult> implements OnInit, 
       this.modalElement = jQuery(this.elementRef.nativeElement).find(`#${this.id}`);
 
       this.modalElement.on('hidden.bs.modal', () => {
-        // HACK: bootstrap modals take 3-400ms delay due to animations
-        setTimeout(() => this.closeEvent.emit(), 500);
-
-        if (this.closedByCode) {
-          return;
-        }
-        if (this.callbackOrPromise.reject) {
-          this.callbackOrPromise.reject();
-        }
+        setTimeout(() => this.closeEvent.emit(), 500); // HACK: bootstrap modals take 3-400ms delay due to animations
+        this.resolveCallbacks(this.pendingResult);
       });
 
       this.modalElement.on('shown.bs.modal', () => this.onModalViewReady());
@@ -38,15 +31,15 @@ export abstract class BaseModalComponent<TArgument, TResult> implements OnInit, 
     });
   }
 
+  public ngOnDestroy(): void {
+    this.onModalDestroy();
+  }
+
   public abstract onModalInit(): void;
 
   public abstract onModalViewReady(): void;
 
   public abstract onModalDestroy(): void;
-
-  public ngOnDestroy(): void {
-    this.onModalDestroy();
-  }
 
   public openModal(args: ModalArgs): void {
     this.argument = args.arg;
@@ -54,21 +47,18 @@ export abstract class BaseModalComponent<TArgument, TResult> implements OnInit, 
     this.callbackOrPromise = args.callback;
   }
 
-  public closeModalWithResult(result: TResult): void {
-    this.closedByCode = true;
-
+  public closeModal(result?: TResult): void {
+    this.pendingResult = result;
     this.modalElement.modal('hide');
+  }
 
+  private resolveCallbacks(result?: TResult): void {
     if (this.callbackOrPromise.callback) {
       this.callbackOrPromise.callback(result);
     }
     if (this.callbackOrPromise.resolve) {
       this.callbackOrPromise.resolve(result);
     }
-  }
-
-  public closeModal(): void {
-    this.closeModalWithResult(undefined);
   }
 
 }

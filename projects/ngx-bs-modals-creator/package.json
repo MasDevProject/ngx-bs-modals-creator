@@ -2,7 +2,7 @@
   "name": "ngx-bs-modals-creator",
   "author": "masdev",
   "description": "Utility to dinamically create Bootstrap 4 modals using Angular (>= 6)",
-  "version": "6.0.4",
+  "version": "6.0.5",
   "license": "Apache2.0",
   "repository": {
 		"type": "git",

@@ -11,19 +11,28 @@ import { BaseModalComponent } from './base-modal.component';
 })
 export class ModalsContainerComponent implements OnInit, OnDestroy {
 
+  private componentRefs: ComponentRef<BaseModalComponent<any, any>>[] = [];
   private openModalSub: Subscription;
+  private clearAllModalsSub: Subscription;
 
   @ViewChild('modalAnchor', { read: ViewContainerRef }) modalAnchor: ViewContainerRef;
 
   public constructor(private modalSvc: ModalsService) { }
 
   public ngOnInit(): void {
-    this.modalSvc.openModalEvt.subscribe(arg => this.createModal(arg));
+    this.openModalSub = this.modalSvc.openModalEvt.subscribe(arg => this.createModal(arg));
+    this.clearAllModalsSub = this.modalSvc.clearAllModalsEvt.subscribe(() => {
+      this.componentRefs.forEach(modalComponentRef => modalComponentRef.instance.closeModal());
+      this.modalAnchor.clear();
+    });
   }
 
   public ngOnDestroy(): void {
     if (this.openModalSub) {
       this.openModalSub.unsubscribe();
+    }
+    if (this.clearAllModalsSub) {
+      this.clearAllModalsSub.unsubscribe();
     }
   }
 
@@ -35,8 +44,13 @@ export class ModalsContainerComponent implements OnInit, OnDestroy {
     const modalComponentFactory = modalArgs.componentFactoryResolver.resolveComponentFactory(modalArgs.type);
     const modalComponentRef = this.modalAnchor.createComponent(modalComponentFactory);
 
+    this.componentRefs.push(modalComponentRef);
+
     (<BaseModalComponent<any, any>>modalComponentRef.instance).openModal(modalArgs);
-    (<BaseModalComponent<any, any>>modalComponentRef.instance).closeEvent.subscribe(() => modalComponentRef.destroy());
+    (<BaseModalComponent<any, any>>modalComponentRef.instance).closeEvent.subscribe(() => {
+      this.componentRefs.splice(this.componentRefs.indexOf(modalComponentRef, 1));
+      modalComponentRef.destroy();
+    });
 
     return modalComponentRef;
   }

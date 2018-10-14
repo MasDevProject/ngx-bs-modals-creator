@@ -10,12 +10,17 @@ import { MyModalComponent } from './my-modal/my-modal.component';
 })
 export class AppComponent {
 
-  constructor(private modalsSvc: ModalsService, private componentFactoryResolver: ComponentFactoryResolver) {}
+  public closeAfter5Secs = false;
+
+  constructor(private modalsSvc: ModalsService, private componentFactoryResolver: ComponentFactoryResolver) { }
 
   public openModal(): void {
     this.modalsSvc.showAsync('fd', MyModalComponent, this.componentFactoryResolver, 'I\'m the argument')
-      .then(res => alert('The result is: ' + res))
-      .catch(() => alert('Modal close from user'));
+      .then(res => alert('The result is: ' + res));
+
+    if (this.closeAfter5Secs) {
+      setTimeout(() => this.modalsSvc.clearAllModals(), 5000);
+    }
   }
 
 }

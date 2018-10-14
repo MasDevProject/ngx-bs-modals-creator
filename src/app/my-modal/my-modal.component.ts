@@ -23,7 +23,7 @@ export class MyModalComponent extends BaseModalComponent<string, string> {
   }
 
   public done(): void {
-    this.closeModalWithResult('I\'m the result of the first modal');
+    this.closeModal('I\'m the result of the first modal');
   }
 
 }
