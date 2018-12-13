@@ -12,7 +12,9 @@ export class AppComponent {
 
   public closeAfter5Secs = false;
 
-  constructor(private modalsSvc: ModalsService, private componentFactoryResolver: ComponentFactoryResolver) { }
+  public constructor(
+    private modalsSvc: ModalsService,
+    private componentFactoryResolver: ComponentFactoryResolver) { }
 
   public openModal(): void {
     this.modalsSvc.showAsync('fd', MyModalComponent, this.componentFactoryResolver, 'I\'m the argument')

@@ -21,10 +21,7 @@ export class ModalsContainerComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.openModalSub = this.modalSvc.openModalEvt.subscribe(arg => this.createModal(arg));
-    this.clearAllModalsSub = this.modalSvc.clearAllModalsEvt.subscribe(() => {
-      this.componentRefs.forEach(modalComponentRef => modalComponentRef.instance.closeModal());
-      this.modalAnchor.clear();
-    });
+    this.clearAllModalsSub = this.modalSvc.clearAllModalsEvt.subscribe(() => this.closeAllModals());
   }
 
   public ngOnDestroy(): void {
@@ -38,7 +35,7 @@ export class ModalsContainerComponent implements OnInit, OnDestroy {
 
   private createModal<TModal>(modalArgs: ModalArgs): ComponentRef<Type<TModal>> {
     if (modalArgs.clearPreviousModals) {
-      this.modalAnchor.clear();
+      this.closeAllModals();
     }
 
     const modalComponentFactory = modalArgs.componentFactoryResolver.resolveComponentFactory(modalArgs.type);
@@ -53,6 +50,11 @@ export class ModalsContainerComponent implements OnInit, OnDestroy {
     });
 
     return modalComponentRef;
+  }
+
+  private closeAllModals(): void {
+    this.componentRefs.forEach(componentRef => componentRef.instance.closeModal());
+    this.modalAnchor.clear();
   }
 
 }

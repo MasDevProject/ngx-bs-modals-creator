@@ -5,11 +5,13 @@ import { ModalsModule } from 'ngx-bs-modals-creator';
 
 import { AppComponent } from './app.component';
 import { MyModalComponent } from './my-modal/my-modal.component';
+import { SecondModalComponent } from './second-modal/second-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MyModalComponent
+    MyModalComponent,
+    SecondModalComponent
   ],
   imports: [
     BrowserModule,
@@ -18,6 +20,9 @@ import { MyModalComponent } from './my-modal/my-modal.component';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [MyModalComponent]
+  entryComponents: [
+    MyModalComponent,
+    SecondModalComponent
+  ]
 })
 export class AppModule { }
