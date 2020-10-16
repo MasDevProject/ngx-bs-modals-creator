@@ -1,3 +1,9 @@
+# This library is DEPRECATED. Use [ngx-boostrap](https://valor-software.com/ngx-bootstrap/#/) instead.
+
+#
+#
+#
+
 # Intro
 
 `ngx-bs-modals-creator` is a utility that helps developers to show [Boostrap 4.* modals](https://getbootstrap.com/docs/4.0/components/modal) using [Angular](https://angular.io).
